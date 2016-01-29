@@ -1,0 +1,95 @@
+<div class="container main-data text-center">
+    <div class="col-lg-12  insta-icon col-centered">
+        <img src="assets/img/instagram-big.png" alt="Instagram logo">
+    </div>
+
+    <h1 class="text-center text-primary">Instagram</h1>
+
+    <p class="text-center text-info">display your photo stream</p>
+
+    <div class="col-lg-12 login-link col-centered">
+
+        <a class="btn  btn-social btn-md btn-linkedin login-instagram-link" href="#"
+           onclick="login()">
+            <span class="fa fa-instagram"></span>Login with Instagram
+        </a>
+    </div>
+
+</div>
+
+<script>
+    var accessToken = null; //the access token is required to make any endpoint calls, http://instagram.com/developer/endpoints/
+
+    var authenticateInstagram = function (instagramClientId, instagramRedirectUri, callback) {
+
+        //the pop-up window size, change if you want
+        var popupWidth = 600,
+            popupHeight = 400,
+            popupLeft = (window.screen.width - popupWidth) / 2,
+            popupTop = (window.screen.height - popupHeight) / 2;
+
+
+        var popup = window.open('/main/login_checking', '', 'width=' +
+        popupWidth + ',height=' + popupHeight + ',left=' +
+        popupLeft + ',top=' + popupTop + '');
+
+        popup.onload = function () {
+            //open authorize url in pop-up
+            if (window.location.hash.length == 0) {
+                popup.open('https://instagram.com/oauth/authorize/?client_id=' +
+                instagramClientId + '&redirect_uri=' + instagramRedirectUri +
+                '&response_type=token', '_self');
+            }
+            //an interval runs to get the access token from the pop-up
+            var interval = setInterval(function () {
+                try {
+                    //check if hash exists
+                    if (popup.location.hash.length) {
+                        //hash found, that includes the access token
+                        clearInterval(interval);
+                        accessToken = popup.location.hash.slice(14); //slice #access_token= from string
+                        popup.close();
+                        if (callback != undefined && typeof callback == 'function') callback();
+                    }
+                }
+                catch (evt) {
+                    //permission denied
+                }
+
+            }, 100);
+        }
+    };
+
+    function login_callback() {
+        $.ajax({
+            type: 'POST',
+            url: '/main/social_login',
+            data: {
+                token: accessToken
+            },
+            dataType: 'json',
+            cache: false,
+            success: function (data) {
+                // Output data
+                location.reload();
+                /* $.each(data.images, function(i, src) {
+                 $('ul#photos').append('<li><img src="' + src + '"></li>');
+                 });
+
+                 // Store new maxid
+                 $('#more').data('maxid', data.next_id);*/
+            }
+        });
+    }
+
+    function login(e) {
+        var id = '<?php echo $data['id'];?>';
+        var uri = '<?php echo $data['login_url'];?>';
+        authenticateInstagram(
+            id, //instagram client ID
+            uri, //instagram redirect URI
+            login_callback //optional - a callback function
+        );
+        return false;
+    }
+</script>

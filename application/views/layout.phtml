@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Le styles -->
+    <link rel="stylesheet" type="text/css" href="../../assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../../assets/css/bootstrap-social.css">
+    <link href="https://vjs.zencdn.net/4.2/video-js.css" rel="stylesheet">
+
+    <!-- Scripts -->
+    <script src="../../assets/js/jquery.min.js" type="text/javascript"></script>
+    <script src="../../assets/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="https://vjs.zencdn.net/4.2/video.js"></script>
+    <script src="../../assets/js/respond.min.js"></script>
+
+    <!--[if IE]>
+    <script src="../../assets/js/html5shiv.min.js" type="text/javascript"></script>
+    <![endif]-->
+
+
+</head>
+<body>
+<div class="navbar  navbar-static-top">
+    <div class="container">
+        <button class="navbar-toggle navbar-right" data-toggle="collapse" data-target=".navHeaderDiv">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <div class="collapse navbar-collapse navHeaderDiv">
+            <ul class="nav navbar-nav navbar-right">
+                <!--<li class="<?php /*echo ($data['auth_user']) ? "hidden" : ""*/?>"><a href="#">Register</a></li>
+                <li class="<?php /*echo ($data['auth_user']) ? "hidden" : ""*/?>"><a href="#login" data-target="#login" data-toggle="modal">Log In</a></li>-->
+                <li class="<?php echo (!$data['auth_user']) ? "hidden" : ""?>"><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<?php include 'application/views/'.$content_view; ?>
+
+<div class="modal fade" id="login" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form role="form" class="form-horizontal" >
+                <div class="modal-header">
+                    <button class="close" aria-label="Close" data-dismiss="modal"><span
+                            aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">Log In</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="username" class="col-lg-2 control-label">Username:</label>
+                        <div class="col-lg-10"><input class="form-control" id="username" type="text"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pass" class="col-lg-2 control-label">Password:</label>
+
+                        <div class="col-lg-10"><input class="form-control" id="pass" type="password"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn  btn-primary" type="submit">Go</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

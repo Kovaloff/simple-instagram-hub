@@ -1,0 +1,144 @@
+<script src="../../assets/js/carousel.js" type="text/javascript"></script>
+<script src="../../assets/js/smoothscroll.js" type="text/javascript"></script>
+<script src="../../assets/js/custom.js" type="text/javascript"></script>
+<div class="container">
+    <ul class="nav nav-tabs user-data-tabs">
+        <li class="col-md-3 active"><a data-toggle="tab" href="#user-data">User</a></li>
+        <li class="col-md-3"><a data-toggle="tab" href="#user-media">Media</a></li>
+        <li class="col-md-3"><a data-toggle="tab" href="#user-statistic">Statistic</a></li>
+    </ul>
+    <div class="tab-content" style="background-color: white;">
+        <div id="user-data" class="tab-pane fade in active user-main-info">
+
+            <img src="<?php echo $data['userData']->data->profile_picture; ?>" name="aboutme" width="180"
+                 height="180" border="0" class="img-circle"></a>
+            <h3 class="media-heading"><?php echo $data['userData']->data->full_name; ?>
+            </h3>
+
+            <button type="button" class="btn btn-success">Media <span
+                    class="badge"><?php echo $data['userData']->data->counts->media; ?></span></button>
+            <button type="button" class="btn btn-warning">Followed <span
+                    class="badge"><?php echo $data['userData']->data->counts->followed_by; ?></span></button>
+            <button type="button" class="btn btn-danger">Follows <span
+                    class="badge"><?php echo $data['userData']->data->counts->follows; ?></span></button>
+            <hr>
+            <p class="text-left"><strong>Bio: </strong><br>
+                <?php echo $data['userData']->data->bio; ?></p>
+        </div>
+        <div id="user-media" class="tab-pane fade user-media-content">
+
+            <button class="btn btn-warning btn-md reload-media"><i class="fa fa-refresh"></i></button>
+
+            <div class="row single-portfolio-media">
+                <?php foreach ($data['userMedia']->data as $userMedia): ?>
+                    <?php if ($userMedia->type === 'video'): ?>
+                        <div class="col-md-3 single-portfolio col-sm-6">
+                            <figure class="portfolio-item">
+                                <video class="media video-js vjs-default-skin"
+                                       poster="<?php echo $userMedia->images->low_resolution->url; ?>"
+                                       data-setup='{"controls":true, "preload": "auto"}'>
+                                    <source src="<?php echo $userMedia->videos->standard_resolution->url; ?>"
+                                            type="video/mp4"/>
+                                </video>
+                            </figure>
+                            <i class="fa fa-search"></i>
+                        </div>
+                    <?php else : ?>
+                        <div class="col-md-3 single-portfolio col-sm-6">
+                            <figure class="portfolio-item">
+                                <img class="thumbnail img-responsive"
+                                     src="<?php echo $userMedia->images->standard_resolution->url; ?>">
+                                <figcaption><span class="glyphicon glyphicon-heart"
+                                                  aria-hidden="true"> <?php echo $userMedia->likes->count; ?>
+                                        <span class="glyphicon glyphicon-comment"
+                                              aria-hidden="true"> <?php echo $userMedia->comments->count; ?>
+                                </figcaption>
+                            </figure>
+                            <i class="fa fa-search"></i>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+
+            <div tabindex="-1" class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="container text-center">
+                <button id="more" data-maxid="<?php /*echo $data['userMedia']->pagination->next_max_id;*/ ?>" data-tag="">Load more ...</button>
+            </div>-->
+        </div>
+        <div id="user-statistic" class="tab-pane fade user-statistic-content">
+            <table class="table table-responsive table-bordered">
+                <thead>
+                <tr>
+                    <th>Likes</th>
+                    <th>Comments</th>
+                    <th>Tags</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><span class="glyphicon glyphicon-heart"
+                              aria-hidden="true"></span> <?php echo $data['userLikes']; ?></td>
+                    <td><span class="glyphicon glyphicon-comment"
+                              aria-hidden="true"></span> <?php echo $data['userComments']; ?></td>
+                    <td><span class="glyphicon glyphicon-tags"
+                              aria-hidden="true"></span> <?php echo $data['userTags']; ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $('#more').click(function () {
+        var tag = $(this).data('tag'),
+            maxid = $(this).data('maxid');
+        $.ajax({
+            type: 'GET',
+            url: '/main/load_more',
+            data: {
+                max_id: maxid
+            },
+            dataType: 'json',
+            cache: false,
+            success: function (data) {
+               // i cant get more then 20 media in sandbox mode , thats why i didnt implement load more button
+                /* // Output data
+                 $.each(data.images, function (i, src) {
+                 $('.single-portfolio-media ').append('<div class="col-md-3 single-portfolio col-sm-6"><figure class="portfolio-item"><img class="thumbnail img-responsive" src="' + src + '"><i class="fa fa-search"></i></div>');
+                 });
+                 */
+                // Store new maxid
+                $('#more').data('maxid', data.next_id);
+            }
+        });
+    });
+    $('.reload-media').on('click', function () {
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/main/update_media',
+            success: function (data) {
+                $('.single-portfolio-media ').empty();
+                $.each(data.images, function (index, value) {
+                    $('.single-portfolio-media ').append('<div class="col-md-3 single-portfolio col-sm-6"><figure class="portfolio-item"><img class="thumbnail img-responsive" src="' + value.url + '"><figcaption><span class="glyphicon glyphicon-heart" aria-hidden="true"> ' + value.likes + ' <span class="glyphicon glyphicon-comment" aria-hidden="true">' + value.comments + '</figcaption></figure><i class="fa fa-search"></i></div>');
+                });
+            }
+        });
+    });
+    $('.single-portfolio-media').delegate('.thumbnail','click',function(){
+        $('.modal-body').empty();
+        var title = $(this).parent('a').attr("title");
+        $('.modal-title').html(title);
+        $($(this).parents('div').html()).appendTo('.modal-body');
+        $('#myModal').modal({show:true});
+    });
+</script>

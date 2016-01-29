@@ -1,0 +1,14 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Application\\Core\\":"application/core/",
+      "Application\\Model\\":"application/models/",
+      "MetzWeb\\Instagram\\": "vendor/instagram/",
+      "SessionHandler\\Session\\": "vendor/sessionhandler/",
+      "PHPAuth\\": "vendor/phpauth/phpauth/"
+    }
+  },
+  "require": {
+    "phpauth/phpauth": "^1.1"
+  }
+}
